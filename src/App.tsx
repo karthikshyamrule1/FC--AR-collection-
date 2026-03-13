@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import {
   Building2, Download, Filter, ChevronRight, ChevronDown,
-  Check, Mail, Phone, CreditCard, User, Plus, Search, CheckSquare,
+  Check, Mail, Phone, CreditCard, User, Plus, Search, CheckSquare, X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Status } from './types'
@@ -19,13 +19,13 @@ import { STATUS_LABELS, ACTION_TO_STATUS } from './types'
 import { clients, agingBuckets, quickActions, navIcons, numCols, allCols } from './data'
 
 export default function App() {
-  const [expanded, setExpanded]           = useState<Set<number>>(new Set())
-  const [checked, setChecked]             = useState<Set<string>>(new Set())
-  const [action, setAction]               = useState('')
-  const [submitted, setSubmitted]         = useState(false)
+  const [expanded, setExpanded]               = useState<Set<number>>(new Set())
+  const [checked, setChecked]                 = useState<Set<string>>(new Set())
+  const [action, setAction]                   = useState('')
+  const [submitted, setSubmitted]             = useState(false)
   const [invoiceStatuses, setInvoiceStatuses] = useState<Record<string, Status>>({})
-  const [noteOpen, setNoteOpen]           = useState(false)
-  const [noteText, setNoteText]           = useState('')
+  const [noteOpen, setNoteOpen]               = useState(false)
+  const [noteText, setNoteText]               = useState('')
   const [notes, setNotes] = useState([
     { text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', author: 'John Doe',   date: '12-02-2026' },
     { text: 'Eiusmod tempor incididunt ut dolore magna aliqua. Ut enim ad minim veniam.',                                                   author: 'John Doe',   date: '12-02-2026' },
@@ -33,11 +33,9 @@ export default function App() {
     { text: 'Short pay dispute escalated to client. Awaiting signed POD before resubmitting balance of $4,280.00.',                         author: 'Marcus Lee', date: '11-21-2026' },
   ])
 
-  // Derived — no separate panelOpen state needed
   const drawerOpen   = expanded.size > 0 || checked.size > 0
   const hasSelection = checked.size > 0
 
-  // On accordion close, deselect all its child rows
   const toggleExpand = (i: number) => {
     setExpanded(prev => {
       const s = new Set(prev)
@@ -65,9 +63,15 @@ export default function App() {
     setSubmitted(false)
   }
 
-  // Single-select a row; reset action state so drawer shows fresh for new invoice
   const clickRow = (key: string) => {
     setChecked(new Set([key]))
+    setAction('')
+    setSubmitted(false)
+  }
+
+  const closeDrawer = () => {
+    setExpanded(new Set())
+    setChecked(new Set())
     setAction('')
     setSubmitted(false)
   }
@@ -102,8 +106,8 @@ export default function App() {
   return (
     <div className="flex h-screen overflow-hidden bg-white">
 
-      {/* ── SIDEBAR ── */}
-      <aside className="w-[47px] shrink-0 bg-[#171717] flex flex-col items-center">
+      {/* ── SIDEBAR — hidden on mobile, visible md+ ── */}
+      <aside className="hidden md:flex w-[47px] shrink-0 bg-[#171717] flex-col items-center">
         <div className="w-full h-[49px] flex items-center justify-center border-b border-[#2a2a2a]">
           <span className="text-[11px] font-bold text-white tracking-tight">FC</span>
         </div>
@@ -128,19 +132,19 @@ export default function App() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* Header */}
-        <div className="h-[49px] bg-white border-b border-[#e5e7eb] flex items-center px-6 shrink-0">
+        <div className="h-[49px] bg-white border-b border-[#e5e7eb] flex items-center px-4 md:px-6 shrink-0">
           <span className="text-[14px] font-semibold text-[#111827]">AR Collections</span>
         </div>
 
         {/* Page content */}
-        <div className="flex-1 overflow-auto min-h-0 p-4 flex flex-col gap-3 bg-white">
+        <div className="flex-1 overflow-auto min-h-0 p-2 sm:p-3 md:p-4 flex flex-col gap-3 bg-white">
 
-          {/* Metrics cards */}
-          <div className="grid grid-cols-8 gap-3 shrink-0">
+          {/* Metrics cards — 2 cols mobile, 4 cols tablet, 8 cols desktop */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 md:gap-3 shrink-0">
             {agingBuckets.map(b => (
-              <div key={b} className="bg-white rounded-[12px] border border-[#e5e5e5] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1)] flex flex-col items-center py-4 gap-2 cursor-pointer hover:shadow-[0px_2px_6px_rgba(0,0,0,0.12)] transition-shadow">
-                <p className="text-[14px] font-normal text-[#141414] leading-[20px] text-center">{b}</p>
-                <p className="text-[18px] font-semibold text-[#0a0a0a] leading-[32px] text-center">$570k</p>
+              <div key={b} className="bg-white rounded-[12px] border border-[#e5e5e5] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1)] flex flex-col items-center py-3 md:py-4 gap-1.5 md:gap-2 cursor-pointer hover:shadow-[0px_2px_6px_rgba(0,0,0,0.12)] transition-shadow">
+                <p className="text-[12px] md:text-[14px] font-normal text-[#141414] leading-[20px] text-center">{b}</p>
+                <p className="text-[16px] md:text-[18px] font-semibold text-[#0a0a0a] leading-[28px] md:leading-[32px] text-center">$570k</p>
               </div>
             ))}
           </div>
@@ -148,29 +152,30 @@ export default function App() {
           {/* Table container */}
           <div className="rounded-xl border border-[#e5e5e5] bg-white shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1)] flex-1 flex flex-col min-h-0 overflow-hidden">
 
-            {/* Toolbar */}
-            <div className="border-b border-[#e5e7eb] flex items-center gap-2 px-4 h-[44px] shrink-0">
+            {/* Toolbar — wraps on small screens */}
+            <div className="border-b border-[#e5e7eb] flex flex-wrap items-center gap-2 px-3 md:px-4 py-2 md:h-[44px] shrink-0">
               <Tabs defaultValue="client">
                 <TabsList>
                   <TabsTrigger value="client">Client</TabsTrigger>
                   <TabsTrigger value="debtor">Debtor</TabsTrigger>
                 </TabsList>
               </Tabs>
-              <div className="w-px h-5 bg-[#e5e7eb] mx-1" />
+              <div className="hidden sm:block w-px h-5 bg-[#e5e7eb]" />
               <Button variant="outline" className="gap-1.5 h-[28px] text-[12px]">
                 <Filter size={13} /> Filters
               </Button>
               <div className="relative">
                 <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#9ca3af]" />
-                <Input placeholder="Search..." className="pl-8 w-44 h-[28px] text-[12px]" />
+                <Input placeholder="Search..." className="pl-8 w-36 sm:w-44 h-[28px] text-[12px]" />
               </div>
               <div className="flex-1" />
               <Button variant="outline" className="gap-1.5 h-[28px] text-[12px]">
-                <Download size={13} /> Export Aging
+                <Download size={13} />
+                <span className="hidden sm:inline">Export Aging</span>
               </Button>
             </div>
 
-            {/* Table scroll area */}
+            {/* Table scroll area — always horizontally scrollable */}
             <div className="flex-1 overflow-auto min-h-0">
               <table className="w-full border-collapse" style={{ minWidth: 1100 }}>
                 <thead>
@@ -263,9 +268,9 @@ export default function App() {
               </table>
             </div>
 
-            {/* Pagination — outside scroll area, never scrolls horizontally */}
-            <div className="shrink-0 bg-white border-t border-[#e5e7eb] flex items-center justify-end gap-3 px-5 py-2 text-[12px] text-[#6b7280]">
-              <span>Rows per page</span>
+            {/* Pagination */}
+            <div className="shrink-0 bg-white border-t border-[#e5e7eb] flex items-center justify-end gap-2 md:gap-3 px-3 md:px-5 py-2 text-[12px] text-[#6b7280]">
+              <span className="hidden sm:inline">Rows per page</span>
               <select className="border border-[#e5e7eb] rounded text-[12px] px-1.5 py-0.5 text-[#374151]">
                 <option>500</option><option>100</option><option>50</option>
               </select>
@@ -277,21 +282,43 @@ export default function App() {
               </div>
             </div>
 
-          </div>{/* end table container */}
-        </div>{/* end page content */}
+          </div>
+        </div>
       </div>{/* end MAIN */}
 
       {/* ── RIGHT DRAWER ──
-           Opens when: any accordion expanded OR any invoice selected
-           Closes when: all accordions collapsed AND no invoices selected
+           Desktop (lg+): inline panel that pushes main content
+           Mobile/tablet (<lg): fixed overlay slide-over with backdrop
       */}
-      <div className={cn(
-        'shrink-0 border-l border-[#e5e5e5] bg-[#f7f7f7] flex flex-col h-screen transition-all duration-200 overflow-hidden',
-        drawerOpen ? 'w-[374px]' : 'w-0'
-      )}>
-        <div className="w-[374px] h-full overflow-y-auto flex flex-col">
 
-          {/* Debtor section — always visible when drawer open */}
+      {/* Backdrop — mobile/tablet only */}
+      {drawerOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-40 bg-black/30"
+          onClick={closeDrawer}
+        />
+      )}
+
+      <div className={cn(
+        'border-l border-[#e5e5e5] bg-[#f7f7f7] flex flex-col transition-all duration-200 overflow-hidden',
+        // Desktop: inline, pushes content
+        'lg:shrink-0 lg:h-screen lg:relative lg:z-auto',
+        drawerOpen ? 'lg:w-[374px]' : 'lg:w-0',
+        // Mobile/tablet: fixed slide-over from right
+        'fixed inset-y-0 right-0 z-50 h-screen',
+        drawerOpen ? 'w-full sm:w-[374px]' : 'w-0',
+      )}>
+        <div className="w-full sm:w-[374px] h-full overflow-y-auto flex flex-col">
+
+          {/* Drawer header with close button (visible on mobile/tablet) */}
+          <div className="lg:hidden flex items-center justify-between px-[13px] py-3 border-b border-[rgba(189,189,189,0.56)]">
+            <span className="text-[13px] font-semibold text-[#111827]">Invoice Details</span>
+            <button onClick={closeDrawer} className="p-1 rounded hover:bg-[#ebebeb] text-[#6b7280]">
+              <X size={16} />
+            </button>
+          </div>
+
+          {/* Debtor section */}
           <div className="border-b border-[rgba(189,189,189,0.56)] px-[13px] py-[14px] shrink-0">
             <p className="text-[14px] font-semibold text-black leading-[20px] mb-2">Debtor</p>
             <div className="flex flex-col gap-2 px-1 py-0.5">
@@ -314,7 +341,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Empty state — no invoice selected */}
+          {/* Empty state */}
           {!hasSelection && (
             <div className="flex-1 flex flex-col items-center justify-center gap-[8px] px-6">
               <CheckSquare size={24} className="text-[#767676]" strokeWidth={1.5} />
