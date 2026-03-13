@@ -104,7 +104,7 @@ export default function App() {
   )
 
   return (
-    <div className="flex h-screen overflow-hidden bg-white">
+    <div className="flex h-screen w-full overflow-hidden bg-white">
 
       {/* ── SIDEBAR — hidden on mobile, visible md+ ── */}
       <aside className="hidden md:flex w-[47px] shrink-0 bg-[#171717] flex-col items-center">
