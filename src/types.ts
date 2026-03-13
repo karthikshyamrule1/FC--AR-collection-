@@ -6,7 +6,8 @@ export type Status =
 export interface Child {
   inv: string; status?: Status; invDate?: string; ref?: string; date?: string
   current?: string; c130?: string; c3146?: string; c4660?: string
-  c6190?: string; c91120?: string; total?: string; age?: number
+  c6190?: string; c91120?: string; c121150?: string; c151180?: string; c180?: string
+  total?: string; age?: number
 }
 
 export interface ClientRow {
