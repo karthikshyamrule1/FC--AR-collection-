@@ -140,7 +140,7 @@ export default function App() {
         <div className="flex-1 overflow-auto min-h-0 p-2 sm:p-3 md:p-4 flex flex-col gap-3 bg-white">
 
           {/* Metrics cards — 2 cols mobile, 4 cols tablet, 8 cols desktop */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 md:gap-3 shrink-0">
+          <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-2 md:gap-3 shrink-0">
             {agingBuckets.map(b => (
               <div key={b} className="bg-white rounded-[12px] border border-[#e5e5e5] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1)] flex flex-col items-center py-3 md:py-4 gap-1.5 md:gap-2 cursor-pointer hover:shadow-[0px_2px_6px_rgba(0,0,0,0.12)] transition-shadow">
                 <p className="text-[12px] md:text-[14px] font-normal text-[#141414] leading-[20px] text-center">{b}</p>
@@ -153,7 +153,7 @@ export default function App() {
           <div className="rounded-xl border border-[#e5e5e5] bg-white shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1)] flex-1 flex flex-col min-h-0 overflow-hidden">
 
             {/* Toolbar — wraps on small screens */}
-            <div className="border-b border-[#e5e7eb] flex flex-wrap items-center gap-2 px-3 md:px-4 py-2 md:h-[44px] shrink-0">
+            <div className="border-b border-[#e5e7eb] flex flex-wrap items-center gap-2 px-3 md:px-4 py-2 lg:h-[44px] lg:flex-nowrap shrink-0">
               <Tabs defaultValue="client">
                 <TabsList>
                   <TabsTrigger value="client">Client</TabsTrigger>
@@ -301,14 +301,14 @@ export default function App() {
 
       <div className={cn(
         'border-l border-[#e5e5e5] bg-[#f7f7f7] flex flex-col transition-all duration-200 overflow-hidden',
-        // Desktop: inline, pushes content
-        'lg:shrink-0 lg:h-screen lg:relative lg:z-auto',
+        // Desktop (lg+): inline, shrinks main content, no fixed positioning
+        'lg:static lg:shrink-0 lg:h-screen lg:z-auto',
         drawerOpen ? 'lg:w-[374px]' : 'lg:w-0',
-        // Mobile/tablet: fixed slide-over from right
-        'fixed inset-y-0 right-0 z-50 h-screen',
+        // Mobile/tablet (<lg): fixed slide-over from right
+        'fixed inset-y-0 right-0 z-50 h-screen lg:translate-x-0',
         drawerOpen ? 'w-full sm:w-[374px]' : 'w-0',
       )}>
-        <div className="w-full sm:w-[374px] h-full overflow-y-auto flex flex-col">
+        <div className="w-full sm:w-[374px] lg:w-[374px] h-full overflow-y-auto flex flex-col">
 
           {/* Drawer header with close button (visible on mobile/tablet) */}
           <div className="lg:hidden flex items-center justify-between px-[13px] py-3 border-b border-[rgba(189,189,189,0.56)]">
